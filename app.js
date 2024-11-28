@@ -36,7 +36,7 @@ app.get('/login', (req, res) => {
                 <div class="card shadow p-4 hover-effect">
                     <h2 class="text-center mb-4">Iniciar Sesión</h2>
                     <div class="text-center mb-4">
-                        <h5>Bienvenido al Sistema de Tutorias ITSJ</h5>
+                        <h5>Bienvenido al Sistema de Tutorias</h5>
                     </div>
                     <form method="POST" action="/login">
                         <div class="mb-4 form-group form-floating">
