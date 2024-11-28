@@ -36,6 +36,12 @@ app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'login.html'));
 });
 
+// Ruta para servir el formulario de registro
+app.get('/register', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'register.html'));
+});
+
+
 
 // Ruta para el home 
 app.get('/', (req, res) => { 
@@ -65,6 +71,30 @@ app.post('/login', (req, res) => {
         res.send(`¡Bienvenido, ${results[0].email}! Has iniciado sesión exitosamente.`);
     });
 });
+
+
+// Ruta para manejar el envío del formulario de registro
+app.post('/register', (req, res) => {
+    const { email, password } = req.body;
+
+    // Validar campos
+    if (!email || !password) {
+        return res.status(400).send('Por favor completa todos los campos.');
+    }
+
+    // Insertar nuevo usuario en la base de datos
+    const query = 'INSERT INTO users (email, password) VALUES (?, ?)';
+    connection.execute(query, [email, password], (err, results) => {
+        if (err) {
+            return res.status(500).send('Error al registrar al usuario.');
+        }
+
+        // Redirigir a la página de login después de registrar al usuario
+        res.send('¡Registro exitoso! <a href="/login">Inicia sesión aquí</a>');
+    });
+});
+
+
 
 
 // Iniciar el servidor
