@@ -1,0 +1,40 @@
+name: Node.js CI/CD on Amazon Linux
+
+on:
+  push:
+    branches:
+      - master # Ejecutar el flujo de trabajo solo en la rama 'master'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest # El flujo de trabajo se ejecutará en una máquina con Ubuntu
+
+    steps:
+      # 1. Clonar el repositorio
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      # 2. Instalar dependencias de Node.js
+      - name: Install dependencies
+        run: npm install
+
+      # 3. Desplegar archivos al servidor AWS EC2
+      - name: Deploy to AWS EC2
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.REMOTE_HOST }}          # Dirección del servidor remoto
+          username: ${{ secrets.REMOTE_USER }}      # Usuario SSH
+          key: ${{ secrets.SSH_PRIVATE_KEY }}       # Clave privada SSH almacenada en GitHub Secrets
+          source: "./"                              # Archivos a copiar (directorio actual)
+          target: "/var/www/exp" # Destino en el servidor
+
+      # 4. Reiniciar la aplicación en el servidor con PM2
+      - name: Restart PM2 application
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.REMOTE_HOST }}          # Dirección del servidor remoto
+          username: ${{ secrets.REMOTE_USER }}      # Usuario SSH
+          key: ${{ secrets.SSH_PRIVATE_KEY }}       # Clave privada SSH
+          script: |
+            cd /var/www/exp      # Cambiar al directorio del proyecto
+            pm2 reload all                          # Reiniciar todas las aplicaciones PM2
