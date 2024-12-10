@@ -41,6 +41,11 @@ app.get('/register', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'register.html'));
 });
 
+// Ruta para servir el dashboard
+app.get('/dashboard', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'dashboard.html'));
+});
+
 
 
 // Ruta para el home 
@@ -67,10 +72,11 @@ app.post('/login', (req, res) => {
             return res.status(401).send('Credenciales incorrectas. <a href="/login">Inténtalo de nuevo</a>');
         }
 
-        // Simular inicio de sesión exitoso
-        res.send(`¡Bienvenido, ${results[0].email}! Has iniciado sesión exitosamente.`);
+        // Redirigir al dashboard
+        res.redirect('/dashboard');
     });
 });
+
 
 
 // Ruta para manejar el envío del formulario de registro
